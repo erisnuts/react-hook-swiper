@@ -1,0 +1,116 @@
+.horizontal-scroll {
+	position: relative;
+	overflow: hidden
+}
+
+.horizontal-scroll:after,
+.horizontal-scroll:before {
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	right: 0;
+	width: 80px;
+	height: 100%;
+	content: "";
+	opacity: 0;
+	background: -webkit-gradient(linear, left top, right top, from(hsla(0, 0%, 100%, 0)), color-stop(80%, #fff));
+	background: -webkit-linear-gradient(left, hsla(0, 0%, 100%, 0), #fff 80%);
+	background: -o-linear-gradient(left, hsla(0, 0%, 100%, 0) 0, #fff 80%);
+	background: linear-gradient(90deg, hsla(0, 0%, 100%, 0) 0, #fff 80%)
+}
+
+@media (max-width:599px) {
+	.horizontal-scroll:after,
+	.horizontal-scroll:before {
+		display: none
+	}
+}
+
+.horizontal-scroll:after {
+	right: auto;
+	left: 0;
+	background: -webkit-gradient(linear, right top, left top, from(hsla(0, 0%, 100%, 0)), color-stop(80%, #fff));
+	background: -webkit-linear-gradient(right, hsla(0, 0%, 100%, 0), #fff 80%);
+	background: -o-linear-gradient(right, hsla(0, 0%, 100%, 0), #fff 80%);
+	background: linear-gradient(270deg, hsla(0, 0%, 100%, 0), #fff 80%)
+}
+
+.horizontal-scroll.is-left-hidden:after,
+.horizontal-scroll.is-right-hidden:before {
+	z-index: 5;
+	opacity: 1
+}
+
+.horizontal-scroll__left,
+.horizontal-scroll__right {
+	position: absolute;
+	z-index: 6;
+	top: 50%;
+	left: 0;
+	width: 52px;
+	height: 52px;
+	padding-left: .1em;
+	cursor: pointer;
+	-webkit-transition: background-color .2s, opacity .2s;
+	-o-transition: background-color .2s, opacity .2s;
+	transition: background-color .2s, opacity .2s;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	text-align: center;
+	opacity: 0;
+	color: #fff;
+	border-radius: 50%;
+	background-color: #ef404a;
+	font-size: 24px;
+	line-height: 52px
+}
+
+.horizontal-scroll__left i,
+.horizontal-scroll__right i {
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -.2em
+}
+
+.horizontal-scroll__left.is-button-hidden:not(.is-button-disabled),
+.horizontal-scroll__right.is-button-hidden:not(.is-button-disabled) {
+	display: none
+}
+
+.horizontal-scroll__left.is-button-disabled,
+.horizontal-scroll__right.is-button-disabled {
+	background-color: #ccc;
+	cursor: auto
+}
+
+.horizontal-scroll__left {
+	-webkit-transform: scaleX(-1) translateY(-50%);
+	-ms-transform: scaleX(-1) translateY(-50%);
+	transform: scaleX(-1) translateY(-50%)
+}
+
+.horizontal-scroll__right {
+	left: auto;
+	right: 0
+}
+
+.horizontal-scroll__content {
+	width: 100%;
+	position: relative;
+	overflow-x: scroll;
+	-webkit-overflow-scrolling: touch
+}
+
+.horizontal-scroll.is-small .horizontal-scroll__left,
+.horizontal-scroll.is-small .horizontal-scroll__right {
+	width: 42px;
+	height: 42px;
+	font-size: 20px;
+	line-height: 42px
+}
+
+.horizontal-scroll:hover .horizontal-scroll__left,
+.horizontal-scroll:hover .horizontal-scroll__right {
+	opacity: 1
+}
