@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const IconfontWebpackPlugin = require('iconfont-webpack-plugin');
 
 module.exports = {
   entry: "./src/index.js",
@@ -14,7 +15,17 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: [
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader'
+        ]
+      },
+      {
+        test: /\.(svg|eot|ttf|woff)$/,
+        exclude: /node_modules/,
+        loader: "file-loader",
+        options: { esModule: false }
       }
     ]
   },

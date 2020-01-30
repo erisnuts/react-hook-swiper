@@ -1,18 +1,20 @@
 import React, { Component} from 'react';
 import { hot } from 'react-hot-loader';
 
-import Swiper from './Swiper';
+import Swiper from './components/Swiper';
+import Menu from './components/Menu';
+
+//import './App.css';
 
 class App extends Component{
   render(){
     return(
       <div className='App'>
-        <h1> Hello, World! </h1>
-        <Swiper>
-          <div>hfp</div>
-          <div>fvbf</div>
-          <div>vdf</div>
-        </Swiper>
+        <div className='caterer-menu'>
+          <Swiper>
+            <Menu />
+          </Swiper>
+        </div>
       </div>
     );
   }

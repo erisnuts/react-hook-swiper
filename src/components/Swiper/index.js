@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import scrollTo from '../utils/scrollTo'
-import getScrollbarWidth from '../utils/getScrollbarWidth'
+import scrollTo from '../../utils/scrollTo'
+import getScrollbarWidth from '../../utils/getScrollbarWidth'
 
 import './index.css'
 
-export default class extends Component {
+export default class Swiper extends Component {
   constructor(props) {
     super(props);
 
@@ -16,25 +16,17 @@ export default class extends Component {
       onRight: true,
       clicked: false
     }
+
+    this._renderLeftRightButton = this._renderLeftRightButton.bind(this);
+    this._handleScroll = this._handleScroll.bind(this);
+    this._renderContent = this._renderContent.bind(this);
+    this._handleScroll = this._handleScroll.bind(this);
+    this._handleMouseLeave = this._handleMouseLeave.bind(this);
+    this._handleSlide = this._handleSlide.bind(this);
   }
 
   componentDidMount() {
     this._handleScroll()
-  }
-
-  render() {
-    return (
-      <div
-        className={classnames(this.props.className, 'horizontal-scroll', {
-          'is-left-hidden': !this.state.onLeft,
-          'is-right-hidden': !this.state.onRight
-        })}
-        onMouseLeave={this._handleMouseLeave}>
-        {this._renderLeftRightButton('left')}
-        {this._renderLeftRightButton('right')}
-        {this._renderContent()}
-      </div>
-    )
   }
 
   _renderLeftRightButton (direction) {
@@ -52,13 +44,10 @@ export default class extends Component {
 
     return (
       <div
-        className={classnames(classNameButton, classNameDirection, classNameDirectionDefault, 'only-desktop', {
-          'is-button-hidden': onLeftRight,
+        className={classnames(classNameButton, classNameDirection, classNameDirectionDefault, {
           'is-button-disabled': !withoutDisabledButtons && this.state.clicked && onLeftRight
         })}
-        onClick={onClick}>
-        {showIcon && <i className="icon-arrow" />}
-      </div>
+        onClick={onClick} />
     )
   }
 
@@ -107,5 +96,20 @@ export default class extends Component {
     scrollTo({ x: newScrollLeft }, 500, this.refs.horizontalScroll)
 
     this.setState({ clicked: true })
+  }
+
+  render() {
+    return (
+      <div
+        className={classnames(this.props.className, 'horizontal-scroll', {
+          'is-left-hidden': !this.state.onLeft,
+          'is-right-hidden': !this.state.onRight
+        })}
+        onMouseLeave={this._handleMouseLeave}>
+        {this._renderLeftRightButton('left')}
+        {this._renderContent()}
+        {this._renderLeftRightButton('right')}
+      </div>
+    )
   }
 }
