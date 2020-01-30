@@ -90,7 +90,7 @@ module.exports = function (webpack) {
       }),
       require('postcss-custom-properties')({}),
       require('postcss-calc')({}),
-      require('autoprefixer')({ browsers: ['last 2 version'] })
+      require('autoprefixer')()
       // require('cssnano')({ zindex: false }),
     ]
   };
