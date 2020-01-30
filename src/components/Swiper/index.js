@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
@@ -7,109 +7,108 @@ import getScrollbarWidth from '../../utils/getScrollbarWidth'
 
 import './index.css'
 
-export default class Swiper extends Component {
-  constructor(props) {
-    super(props);
+const Swiper = (props) => {
+  const {
+    children,
+    className,
+    classNameButton,
+    classNameButtonLeft,
+    classNameButtonRight,
+    classNameContent,
+    withoutDisabledButtons
+  } = props;
 
-    this.state = {
-      onLeft: true,
-      onRight: true,
-      clicked: false
+  const [onLeft, setOnLeft] = useState(true);
+  const [onRight, setOnRight] = useState(true);
+  const [clicked, setClicked] = useState(false);
+  const ref = React.createRef();
+
+  const _handleScroll = () => {
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+
+    if (scrollLeft <= 0 && !onLeft) {
+      setOnLeft(true);
+    }
+    if (scrollLeft > 0 && onLeft) {
+      setOnLeft(false);
     }
 
-    this._renderLeftRightButton = this._renderLeftRightButton.bind(this);
-    this._handleScroll = this._handleScroll.bind(this);
-    this._renderContent = this._renderContent.bind(this);
-    this._handleScroll = this._handleScroll.bind(this);
-    this._handleMouseLeave = this._handleMouseLeave.bind(this);
-    this._handleSlide = this._handleSlide.bind(this);
-  }
-
-  componentDidMount() {
-    this._handleScroll()
-  }
-
-  _renderLeftRightButton (direction) {
-    const {
-      classNameButton,
-      classNameButtonRight,
-      classNameButtonLeft,
-      withoutDisabledButtons,
-      showIcon = true
-    } = this.props
-    const classNameDirection = direction === 'left' ? classNameButtonLeft : classNameButtonRight
-    const classNameDirectionDefault = direction === 'left' ? 'horizontal-scroll__left' : 'horizontal-scroll__right'
-    const onLeftRight = direction === 'left' ? this.state.onLeft : this.state.onRight
-    const onClick = () => (direction === 'left' ? this._handleSlide(-1) : this._handleSlide(1))
-
-    return (
-      <div
-        className={classnames(classNameButton, classNameDirection, classNameDirectionDefault, {
-          'is-button-disabled': !withoutDisabledButtons && this.state.clicked && onLeftRight
-        })}
-        onClick={onClick} />
-    )
-  }
-
-  _renderContent () {
-    const scrollbarWidth = getScrollbarWidth()
-
-    return (
-      <div
-        ref="horizontalScroll"
-        className={classnames(this.props.classNameContent, 'horizontal-scroll__content')}
-        style={scrollbarWidth === 0 ? { marginBottom: -40, paddingBottom: 40 } : { marginBottom: -scrollbarWidth }}
-        onScroll={this._handleScroll}>
-        {this.props.children}
-      </div>
-    )
-  }
-
-  _handleScroll () {
-    const { scrollLeft, scrollWidth, clientWidth } = this.refs.horizontalScroll
-
-    if (scrollLeft <= 0 && !this.state.onLeft) {
-      this.setState({ onLeft: true })
+    if (scrollLeft >= scrollWidth - clientWidth - 1 && !onRight) {
+      setOnRight(true);
     }
-    if (scrollLeft > 0 && this.state.onLeft) {
-      this.setState({ onLeft: false })
-    }
-
-    if (scrollLeft >= scrollWidth - clientWidth - 1 && !this.state.onRight) {
-      this.setState({ onRight: true })
-    }
-    if (scrollLeft < scrollWidth - clientWidth - 1 && this.state.onRight) {
-      this.setState({ onRight: false })
+    if (scrollLeft < scrollWidth - clientWidth - 1 && onRight) {
+      setOnRight(false);
     }
   }
 
-  _handleMouseLeave () {
+  const _handleSlide = (direction) => {
+    const { scrollLeft, clientWidth } = ref.current;
+
+    const newScrollLeft = scrollLeft + direction * clientWidth * 0.5;
+    scrollTo({ x: newScrollLeft }, 500, ref.current);
+
+    setClicked(true);
+  }
+
+  const _handleMouseLeave = () => {
     setTimeout(() => {
-      this.setState({ clicked: false })
+      setClicked(false);
     }, 200)
   }
 
-  _handleSlide (direction) {
-    const { scrollLeft, clientWidth } = this.refs.horizontalScroll
+  useEffect(() => {
+    _handleScroll();
+  });
 
-    const newScrollLeft = scrollLeft + direction * clientWidth * 0.5
-    scrollTo({ x: newScrollLeft }, 500, this.refs.horizontalScroll)
-
-    this.setState({ clicked: true })
-  }
-
-  render() {
-    return (
-      <div
-        className={classnames(this.props.className, 'horizontal-scroll', {
-          'is-left-hidden': !this.state.onLeft,
-          'is-right-hidden': !this.state.onRight
+  return (
+    <div
+      className={classnames(className, 'horizontal-scroll', {
+        'is-left-hidden': !onLeft,
+        'is-right-hidden': !onRight
+      })}
+      onMouseLeave={_handleMouseLeave}>
+      <Button
+        className={classnames(classNameButton, classNameButtonLeft, 'horizontal-scroll__left', {
+          'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
         })}
-        onMouseLeave={this._handleMouseLeave}>
-        {this._renderLeftRightButton('left')}
-        {this._renderContent()}
-        {this._renderLeftRightButton('right')}
-      </div>
-    )
-  }
+        onClick={() => _handleSlide(-1)}
+      />
+      <Content
+        ref={ref}
+        className={classNameContent}
+        children={children}
+        onScroll={_handleScroll}
+      />
+      <Button
+        className={classnames(classNameButton, classNameButtonRight, 'horizontal-scroll__right', {
+          'is-button-disabled': !withoutDisabledButtons && clicked && onRight
+        })}
+        onClick={() => _handleSlide(1)}
+      />
+    </div>
+  );
 }
+
+const Content = React.forwardRef(({ className, children, onScroll }, ref) => {
+  const scrollbarWidth = getScrollbarWidth();
+
+  return (
+    <div
+      ref={ref}
+      className={classnames(className, 'horizontal-scroll__content')}
+      style={scrollbarWidth === 0 ? { marginBottom: -40, paddingBottom: 40 } : { marginBottom: -scrollbarWidth }}
+      onScroll={onScroll}>
+      {children}
+    </div>
+  );
+})
+
+const Button = ({ className, onClick }) => (
+  <div
+    className={className}
+    onClick={onClick}
+  />
+);
+
+
+export default Swiper;
