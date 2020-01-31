@@ -31,17 +31,22 @@ const ScrollableSelect = ({ options }) => {
       {
         isMobile
           ? <Select
-            value={value}
-            options={options}
-            onChange={setValue}
-          />
-          : <Swiper>
-            <Menu
               value={value}
               options={options}
               onChange={setValue}
             />
-          </Swiper>
+          : <Swiper
+              value={value}
+              options={options}
+              onChange={setValue}
+              withoutDisabledButtons={true}
+            >
+              <Menu
+                value={value}
+                options={options}
+                onChange={setValue}
+              />
+            </Swiper>
       }
     </div>
   )

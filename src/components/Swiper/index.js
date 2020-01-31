@@ -10,6 +10,7 @@ import './index.css'
 const Swiper = (props) => {
   const {
     children,
+    value, options, onChange,
     className,
     classNameButton,
     classNameButtonLeft,
@@ -44,10 +45,32 @@ const Swiper = (props) => {
   const _handleSlide = (direction) => {
     const { scrollLeft, clientWidth } = ref.current;
 
-    const newScrollLeft = scrollLeft + direction * clientWidth * 0.5;
+    const newScrollLeft = scrollLeft + direction * clientWidth * (1/options.length);
     scrollTo({ x: newScrollLeft }, 500, ref.current);
 
     setClicked(true);
+  }
+
+  const _handleChange = (direction) => {
+    const index = options.indexOf(value) + direction;
+
+    if(index < 0) {
+      onChange(options[options.length-1]);
+      _handleSlide(options.length-1);
+      return;
+    }
+
+    if(0 <= index && index < options.length) {
+      onChange(options[index]);
+      _handleSlide(direction);
+      return;
+    }
+
+    if(index >= options.length) {
+      onChange(options[0]);
+      _handleSlide(-options.length-1);
+      return;
+    }
   }
 
   const _handleMouseLeave = () => {
@@ -76,7 +99,7 @@ const Swiper = (props) => {
         className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
           'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
         })}
-        onClick={() => _handleSlide(-1)}
+        onClick={() => _handleChange(-1)}
       />
       <Content
         ref={ref}
@@ -88,7 +111,7 @@ const Swiper = (props) => {
         className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
           'is-button-disabled': !withoutDisabledButtons && clicked && onRight
         })}
-        onClick={() => _handleSlide(1)}
+        onClick={() => _handleChange(1)}
       />
     </div>
   );
