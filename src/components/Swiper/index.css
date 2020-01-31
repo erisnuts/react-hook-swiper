@@ -39,7 +39,7 @@
 .swiper.is-left-hidden:after,
 .swiper.is-right-hidden:before {
 	z-index: 5;
-	opacity: 1
+	opacity: 1;
 }
 
 .swiper__right{

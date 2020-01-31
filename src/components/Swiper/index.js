@@ -57,7 +57,12 @@ const Swiper = (props) => {
   }
 
   useEffect(() => {
+    window.addEventListener('resize', _handleScroll);
     _handleScroll();
+
+    return () => {
+      window.removeEventListener('resize', _handleScroll);
+    };
   });
 
   return (

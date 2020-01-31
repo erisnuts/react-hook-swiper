@@ -3,8 +3,6 @@ import { hot } from 'react-hot-loader';
 
 import ScrollableSelect from './components/ScrollableSelect';
 
-import './App.css';
-
 const options = [
   { value: 1, label: '01 октября - 31 октября' },
   { value: 2, label: '01 ноября - 29 декабря' },
