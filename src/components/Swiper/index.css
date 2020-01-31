@@ -1,11 +1,11 @@
-.horizontal-scroll {
+.swiper {
 	position: relative;
 	overflow: hidden;
   display: flex;
 }
 
-.horizontal-scroll:after,
-.horizontal-scroll:before {
+.swiper:after,
+.swiper:before {
 	position: absolute;
 	z-index: -1;
 	top: 0;
@@ -21,13 +21,13 @@
 }
 
 @media (max-width:599px) {
-	.horizontal-scroll:after,
-	.horizontal-scroll:before {
+	.swiper:after,
+	.swiper:before {
 		display: none
 	}
 }
 
-.horizontal-scroll:after {
+.swiper:after {
 	right: auto;
 	left: 0;
 	background: -webkit-gradient(linear, right top, left top, from(hsla(0, 0%, 100%, 0)), color-stop(80%, #fff));
@@ -36,26 +36,26 @@
 	background: linear-gradient(270deg, hsla(0, 0%, 100%, 0), #fff 80%)
 }
 
-.horizontal-scroll.is-left-hidden:after,
-.horizontal-scroll.is-right-hidden:before {
+.swiper.is-left-hidden:after,
+.swiper.is-right-hidden:before {
 	z-index: 5;
 	opacity: 1
 }
 
-.horizontal-scroll__right{
+.swiper__right{
   justify-content: center;
   right: 0;
   background: linear-gradient(to right, rgba(255,255,255,0) 0%, var(--white) 30%);
 }
 
-.horizontal-scroll__left{
+.swiper__left{
   left: 0;
   justify-content: center;
   background: linear-gradient(to left, rgba(255,255,255, 0) 0%, var(--white) 30%);
 }
 
-.horizontal-scroll__left,
-.horizontal-scroll__right {
+.swiper__left,
+.swiper__right {
   display: flex;
 	z-index: 6;
 	width: 40px;
@@ -78,8 +78,8 @@
   transition: color ease .2s;
 }
 
-.horizontal-scroll__left:before,
-.horizontal-scroll__right:before {
+.swiper__left:before,
+.swiper__right:before {
   display: block;
   transition: opacity ease .2s;
   flex: 0 0 auto;
@@ -95,24 +95,24 @@
   transition: color ease .2s;
 }
 
-.horizontal-scroll__left:hover,
-.horizontal-scroll__right:hover {
+.swiper__left:hover,
+.swiper__right:hover {
   color: #ED4D74;
 }
 
-.horizontal-scroll__left.is-button-disabled,
-.horizontal-scroll__right.is-button-disabled {
+.swiper__left.is-button-disabled,
+.swiper__right.is-button-disabled {
   color: grey;
 	cursor: auto;
 }
 
-.horizontal-scroll__left {
+.swiper__left {
 	-webkit-transform: scaleX(-1) translateY(-50%);
 	-ms-transform: scaleX(-1) translateY(-50%);
 	transform: scaleX(-1) translateY(-50%)
 }
 
-.horizontal-scroll__content {
+.swiper__content {
 	width: 100%;
 	position: relative;
 	overflow-x: scroll;

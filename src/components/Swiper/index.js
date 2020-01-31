@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames'
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 import scrollTo from '../../utils/scrollTo'
 import getScrollbarWidth from '../../utils/getScrollbarWidth'
@@ -62,13 +62,13 @@ const Swiper = (props) => {
 
   return (
     <div
-      className={classnames(className, 'horizontal-scroll', {
+      className={classnames(className, 'swiper', {
         'is-left-hidden': !onLeft,
         'is-right-hidden': !onRight
       })}
       onMouseLeave={_handleMouseLeave}>
       <Button
-        className={classnames(classNameButton, classNameButtonLeft, 'horizontal-scroll__left', {
+        className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
           'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
         })}
         onClick={() => _handleSlide(-1)}
@@ -80,7 +80,7 @@ const Swiper = (props) => {
         onScroll={_handleScroll}
       />
       <Button
-        className={classnames(classNameButton, classNameButtonRight, 'horizontal-scroll__right', {
+        className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
           'is-button-disabled': !withoutDisabledButtons && clicked && onRight
         })}
         onClick={() => _handleSlide(1)}
@@ -95,7 +95,7 @@ const Content = React.forwardRef(({ className, children, onScroll }, ref) => {
   return (
     <div
       ref={ref}
-      className={classnames(className, 'horizontal-scroll__content')}
+      className={classnames(className, 'swiper__content')}
       style={scrollbarWidth === 0 ? { marginBottom: -40, paddingBottom: 40 } : { marginBottom: -scrollbarWidth }}
       onScroll={onScroll}>
       {children}
