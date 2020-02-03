@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import ReactSelect from 'react-select';
+
+import './index.css';
 
 const Select = ({ options, value, onChange }) => (
-  <ReactSelect
+  <select
     options={options}
     value={value}
     onChange={onChange}

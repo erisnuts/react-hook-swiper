@@ -1,10 +1,11 @@
+/* Swiper */
+
 .swiper-menu__list {
   margin: 0;
   padding: 0;
   list-style: none;
   position: relative;
   z-index: 1;
-  margin: 10px 0 0 12px;
   white-space: nowrap;
 }
 
@@ -20,7 +21,6 @@
 .swiper-menu__item {
   display: inline-block;
   height: 35px;
-  margin-right: 8px;
   padding: 0 7px;
   cursor: pointer;
   text-align: center;
@@ -36,6 +36,13 @@
   color: #DDDFE0;
   user-select: none;
   white-space: nowrap;
+}
+
+@media (max-width:768px) {
+  .swiper-menu__item {
+    min-width: 100%;
+    padding: 0;
+  }
 }
 
 @media (max-width:599px) {
@@ -67,4 +74,14 @@
 
 .swiper-menu__item.is-active:before {
   background: #4E89FF;
+}
+
+/* Dropdown */
+
+.dropdown {
+  position: absolute;
+}
+
+.dropdown-menu__list {
+
 }

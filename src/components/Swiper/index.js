@@ -2,15 +2,23 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+import Select from '../Select';
+import Menu from '../Menu';
+
 import scrollTo from '../../utils/scrollTo'
 import getScrollbarWidth from '../../utils/getScrollbarWidth'
 
 import './index.css'
 
+const TABLET_BREAKPOINT = 768;
+const getIsMobile = () =>
+  window
+    ? (window.innerWidth < TABLET_BREAKPOINT)
+    : false;
+
 const Swiper = (props) => {
   const {
-    children,
-    value, options, onChange,
+    options,
     className,
     classNameButton,
     classNameButtonLeft,
@@ -19,9 +27,12 @@ const Swiper = (props) => {
     withoutDisabledButtons
   } = props;
 
+  const [value, setValue] = useState(options[0]);
+  const [isMobile, setIsMobile] = useState(getIsMobile());
   const [onLeft, setOnLeft] = useState(true);
   const [onRight, setOnRight] = useState(true);
   const [clicked, setClicked] = useState(false);
+
   const ref = React.createRef();
 
   const _handleScroll = () => {
@@ -45,7 +56,9 @@ const Swiper = (props) => {
   const _handleSlide = (direction) => {
     const { scrollLeft, clientWidth } = ref.current;
 
-    const newScrollLeft = scrollLeft + direction * clientWidth * (1/options.length);
+    const newScrollLeft = isMobile
+      ? scrollLeft + direction * clientWidth
+      : scrollLeft + direction * clientWidth * (1/options.length);
     scrollTo({ x: newScrollLeft }, 500, ref.current);
 
     setClicked(true);
@@ -55,19 +68,19 @@ const Swiper = (props) => {
     const index = options.indexOf(value) + direction;
 
     if(index < 0) {
-      onChange(options[options.length-1]);
+      setValue(options[options.length-1]);
       _handleSlide(options.length-1);
       return;
     }
 
     if(0 <= index && index < options.length) {
-      onChange(options[index]);
+      setValue(options[index]);
       _handleSlide(direction);
       return;
     }
 
     if(index >= options.length) {
-      onChange(options[0]);
+      setValue(options[0]);
       _handleSlide(-options.length-1);
       return;
     }
@@ -83,35 +96,66 @@ const Swiper = (props) => {
     window.addEventListener('resize', _handleScroll);
     _handleScroll();
 
+    const handleStatusChange = () =>
+      setIsMobile(getIsMobile());
+
+    window.addEventListener('resize', handleStatusChange);
     return () => {
+      window.removeEventListener('resize', handleStatusChange);
       window.removeEventListener('resize', _handleScroll);
     };
   });
 
   return (
-    <div
-      className={classnames(className, 'swiper', {
-        'is-left-hidden': !onLeft,
-        'is-right-hidden': !onRight
-      })}
-      onMouseLeave={_handleMouseLeave}>
-      <Button
-        className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
-          'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
-        })}
-        onClick={() => _handleChange(-1)}
+    <div className='swiper-container'>
+      <Dropdown
+        value={value}
+        options={options}
+        onChange={setValue}
       />
-      <Content
-        ref={ref}
-        className={classNameContent}
-        children={children}
-        onScroll={_handleScroll}
-      />
-      <Button
-        className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
-          'is-button-disabled': !withoutDisabledButtons && clicked && onRight
+      <div
+        className={classnames(className, 'swiper', {
+          'is-left-hidden': !onLeft,
+          'is-right-hidden': !onRight
         })}
-        onClick={() => _handleChange(1)}
+        onMouseLeave={_handleMouseLeave}>
+        <Button
+          className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
+            'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
+          })}
+          onClick={() => _handleChange(-1)}
+        />
+        <Content
+          ref={ref}
+          className={classNameContent}
+          onScroll={_handleScroll}
+        >
+          <Menu
+            className='swiper'
+            value={value}
+            options={options}
+            onChange={setValue}
+          />
+        </Content>
+        <Button
+          className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
+            'is-button-disabled': !withoutDisabledButtons && clicked && onRight
+          })}
+          onClick={() => _handleChange(1)}
+        />
+      </div>
+    </div>
+  );
+}
+
+const Dropdown = ({ value, options, onChange }) => {
+  return (
+    <div className='dropdown'>
+      <Menu
+        className='dropdown'
+        value={value}
+        options={options.filter(option => option.value !== value.value)}
+        onChange={onChange}
       />
     </div>
   );

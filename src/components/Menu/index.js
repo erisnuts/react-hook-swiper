@@ -4,15 +4,15 @@ import classnames from 'classnames';
 
 import './index.css';
 
-const Menu = ({ value, options, onChange }) => (
-  <div className="swiper-menu__list">
+const Menu = ({ className, value, options, onChange }) => (
+  <div className={`${className}-menu__list`}>
     {
       options.map((option, key) => (
         <div
           key={key}
           className={
             classnames(
-              'swiper-menu__item',
+              `${className}-menu__item`,
               { 'is-active': value && (option.value === value.value) }
             )
           }
