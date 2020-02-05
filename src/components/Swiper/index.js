@@ -31,6 +31,7 @@ const Swiper = (props) => {
   const [onLeft, setOnLeft] = useState(true);
   const [onRight, setOnRight] = useState(true);
   const [clicked, setClicked] = useState(false);
+  const [scrolling, setScrolling] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
 
   const ref = React.createRef();
@@ -60,15 +61,28 @@ const Swiper = (props) => {
       ? scrollLeft + direction * clientWidth
       : scrollLeft + direction * clientWidth * (1/options.length);
 
-    console.log(direction, newScrollLeft);
-
     const duration = Math.abs(direction) * 500;
+
+    setScrolling(true);
     scrollTo({ x: newScrollLeft }, duration, ref.current);
+    setTimeout(() => {
+      setScrolling(false);
+    }, duration)
 
     setClicked(true);
   }
 
-  const _handleChange = (direction) => {
+  const _handleChange = (option) => {
+    const
+      prev = options.indexOf(value),
+      next = options.indexOf(option),
+      sign = (next-prev) / (Math.abs(next-prev));
+
+    _handleSlide(sign * next);
+    setValue(option);
+  }
+
+  const _handleClick = (direction) => {
     const index = options.indexOf(value) + direction;
 
     if(index < 0) {
@@ -113,15 +127,14 @@ const Swiper = (props) => {
   return (
     <div className='swiper-container'>
       <Dropdown
+        visible={isDropdown}
         value={value}
         options={options}
         onChange={
           (option) => {
-            setValue(option);
-            _handleSlide(options.indexOf(option));
+            _handleChange(option);
             setIsDropdown(false);
           }}
-        visible={isDropdown}
       />
       <div
         className={classnames(className, 'swiper', {
@@ -131,9 +144,10 @@ const Swiper = (props) => {
         onMouseLeave={_handleMouseLeave}>
         <Button
           className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
+            'is-button-disabled': scrolling,
             'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
           })}
-          onClick={() => _handleChange(-1)}
+          onClick={() => _handleClick(-1)}
         />
         <Content
           ref={ref}
@@ -145,23 +159,15 @@ const Swiper = (props) => {
             className='swiper'
             value={value}
             options={options}
-            onChange={
-              (option) => {
-                setValue(option);
-
-                const
-                  prev = options.indexOf(value),
-                  next = options.indexOf(option),
-                  sign = next-prev / (Math.abs(next-prev));
-                _handleSlide(sign * next);
-              }}
+            onChange={_handleChange}
           />
         </Content>
         <Button
           className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
+            'is-button-disabled': scrolling,
             'is-button-disabled': !withoutDisabledButtons && clicked && onRight
           })}
-          onClick={() => _handleChange(1)}
+          onClick={() => _handleClick(1)}
         />
       </div>
     </div>

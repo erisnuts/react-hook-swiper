@@ -122,6 +122,7 @@
 .swiper__right.is-button-disabled {
   color: grey;
 	cursor: auto;
+  pointer-events: none;
 }
 
 .swiper__left {
