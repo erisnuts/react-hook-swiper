@@ -118,8 +118,8 @@
   color: #ED4D74;
 }
 
-.swiper__left.is-button-disabled,
-.swiper__right.is-button-disabled {
+.swiper__left.is-button-disabled, .swiper__left[disabled],
+.swiper__right.is-button-disabled, .swiper__right[disabled] {
   color: grey;
 	cursor: auto;
   pointer-events: none;

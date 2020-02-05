@@ -17,7 +17,7 @@ const App = () => (
   <div className='App'>
     <Swiper
       options={options}
-      withoutDisabledButtons
+      //withoutDisabledButtons
     />
   </div>
 );

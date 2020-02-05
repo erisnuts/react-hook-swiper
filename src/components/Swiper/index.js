@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -31,13 +31,15 @@ const Swiper = (props) => {
   const [onLeft, setOnLeft] = useState(true);
   const [onRight, setOnRight] = useState(true);
   const [clicked, setClicked] = useState(false);
-  const [scrolling, setScrolling] = useState(false);
+  //const [scrolling, setScrolling] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
 
-  const ref = React.createRef();
+  const content = React.createRef();
+  const lbtn = React.createRef();
+  const rbtn = React.createRef();
 
   const _handleScroll = () => {
-    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    const { scrollLeft, scrollWidth, clientWidth } = content.current;
 
     if (scrollLeft <= 0 && !onLeft) {
       setOnLeft(true);
@@ -54,8 +56,11 @@ const Swiper = (props) => {
     }
   }
 
+  const lbtnRef = useRef(lbtn); lbtnRef.current = lbtn;
+  const rbtnRef = useRef(rbtn); rbtnRef.current = rbtn;
+
   const _handleSlide = (direction) => {
-    const { scrollLeft, clientWidth } = ref.current;
+    const { scrollLeft, clientWidth } = content.current;
 
     const newScrollLeft = isMobile
       ? scrollLeft + direction * clientWidth
@@ -63,11 +68,15 @@ const Swiper = (props) => {
 
     const duration = Math.abs(direction) * 500;
 
-    setScrolling(true);
-    scrollTo({ x: newScrollLeft }, duration, ref.current);
-    setTimeout(() => {
-      setScrolling(false);
-    }, duration)
+    lbtn.current.setAttribute('disabled', '');
+    rbtn.current.setAttribute('disabled', '');
+
+    scrollTo({ x: newScrollLeft }, duration, content.current);
+
+    setTimeout((lbtnRef, rbtnRef) => {
+      lbtnRef.current.current.removeAttribute('disabled');
+      rbtnRef.current.current.removeAttribute('disabled');
+    }, duration, lbtnRef, rbtnRef)
 
     setClicked(true);
   }
@@ -143,14 +152,15 @@ const Swiper = (props) => {
         })}
         onMouseLeave={_handleMouseLeave}>
         <Button
+          ref={lbtn}
           className={classnames(classNameButton, classNameButtonLeft, 'swiper__left', {
-            'is-button-disabled': scrolling,
+            //'is-button-disabled': scrolling,
             'is-button-disabled': !withoutDisabledButtons && clicked && onLeft
           })}
           onClick={() => _handleClick(-1)}
         />
         <Content
-          ref={ref}
+          ref={content}
           className={classNameContent}
           onScroll={_handleScroll}
           onClick={() => isMobile ? setIsDropdown(!isDropdown) : {}}
@@ -163,8 +173,9 @@ const Swiper = (props) => {
           />
         </Content>
         <Button
+          ref={rbtn}
           className={classnames(classNameButton, classNameButtonRight, 'swiper__right', {
-            'is-button-disabled': scrolling,
+            //'is-button-disabled': scrolling,
             'is-button-disabled': !withoutDisabledButtons && clicked && onRight
           })}
           onClick={() => _handleClick(1)}
@@ -204,12 +215,13 @@ const Content = React.forwardRef(({ className, children, onScroll, onClick }, re
   );
 })
 
-const Button = ({ className, onClick }) => (
+const Button = React.forwardRef(({ className, onClick }, ref) => (
   <div
+    ref={ref}
     className={className}
     onClick={onClick}
   />
-);
+));
 
 
 export default Swiper;
