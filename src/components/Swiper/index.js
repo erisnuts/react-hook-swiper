@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Select from '../Select';
-import Menu from '../Menu';
+import Menu from './Menu';
 
-import scrollTo from '../../utils/scrollTo'
-import getScrollbarWidth from '../../utils/getScrollbarWidth'
+import scrollTo from './utils/scrollTo'
+import getScrollbarWidth from './utils/getScrollbarWidth'
 
 import './index.css'
 
@@ -32,6 +31,7 @@ const Swiper = (props) => {
   const [onLeft, setOnLeft] = useState(true);
   const [onRight, setOnRight] = useState(true);
   const [clicked, setClicked] = useState(false);
+  const [isDropdown, setIsDropdown] = useState(false);
 
   const ref = React.createRef();
 
@@ -59,7 +59,11 @@ const Swiper = (props) => {
     const newScrollLeft = isMobile
       ? scrollLeft + direction * clientWidth
       : scrollLeft + direction * clientWidth * (1/options.length);
-    scrollTo({ x: newScrollLeft }, 500, ref.current);
+
+    console.log(direction, newScrollLeft);
+
+    const duration = Math.abs(direction) * 500;
+    scrollTo({ x: newScrollLeft }, duration, ref.current);
 
     setClicked(true);
   }
@@ -111,7 +115,13 @@ const Swiper = (props) => {
       <Dropdown
         value={value}
         options={options}
-        onChange={setValue}
+        onChange={
+          (option) => {
+            setValue(option);
+            _handleSlide(options.indexOf(option));
+            setIsDropdown(false);
+          }}
+        visible={isDropdown}
       />
       <div
         className={classnames(className, 'swiper', {
@@ -129,12 +139,22 @@ const Swiper = (props) => {
           ref={ref}
           className={classNameContent}
           onScroll={_handleScroll}
+          onClick={() => isMobile ? setIsDropdown(!isDropdown) : {}}
         >
           <Menu
             className='swiper'
             value={value}
             options={options}
-            onChange={setValue}
+            onChange={
+              (option) => {
+                setValue(option);
+
+                const
+                  prev = options.indexOf(value),
+                  next = options.indexOf(option),
+                  sign = next-prev / (Math.abs(next-prev));
+                _handleSlide(sign * next);
+              }}
           />
         </Content>
         <Button
@@ -148,9 +168,10 @@ const Swiper = (props) => {
   );
 }
 
-const Dropdown = ({ value, options, onChange }) => {
+const Dropdown = ({ visible, value, options, onChange }) => {
+
   return (
-    <div className='dropdown'>
+    <div className={classnames('dropdown', { visible })}>
       <Menu
         className='dropdown'
         value={value}
@@ -161,7 +182,7 @@ const Dropdown = ({ value, options, onChange }) => {
   );
 }
 
-const Content = React.forwardRef(({ className, children, onScroll }, ref) => {
+const Content = React.forwardRef(({ className, children, onScroll, onClick }, ref) => {
   const scrollbarWidth = getScrollbarWidth();
 
   return (
@@ -169,7 +190,9 @@ const Content = React.forwardRef(({ className, children, onScroll }, ref) => {
       ref={ref}
       className={classnames(className, 'swiper__content')}
       style={scrollbarWidth === 0 ? { marginBottom: -40, paddingBottom: 40 } : { marginBottom: -scrollbarWidth }}
-      onScroll={onScroll}>
+      onScroll={onScroll}
+      onClick={onClick}
+    >
       {children}
     </div>
   );

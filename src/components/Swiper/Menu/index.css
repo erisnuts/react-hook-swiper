@@ -79,9 +79,23 @@
 /* Dropdown */
 
 .dropdown {
+  display: none;
   position: absolute;
+  top: 35px;
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.dropdown.visible {
+  display: block;
 }
 
 .dropdown-menu__list {
 
+}
+
+.dropdown-menu__item {
+  height: 35px;
 }
