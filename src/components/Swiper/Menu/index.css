@@ -85,7 +85,6 @@
   width: 100%;
   text-align: center;
   z-index: 100;
-  cursor: pointer;
 }
 
 .dropdown.visible {
@@ -93,9 +92,16 @@
 }
 
 .dropdown-menu__list {
-
+  margin-top: 15px;
 }
 
 .dropdown-menu__item {
   height: 35px;
+  cursor: pointer;
+}
+
+.dropdown-menu__item.is-active {
+  color: #4E89FF;
+  cursor: default;
+  pointer-events: none;
 }

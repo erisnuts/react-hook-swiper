@@ -31,7 +31,6 @@ const Swiper = (props) => {
   const [onLeft, setOnLeft] = useState(true);
   const [onRight, setOnRight] = useState(true);
   const [clicked, setClicked] = useState(false);
-  //const [scrolling, setScrolling] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
 
   const content = React.createRef();
@@ -64,15 +63,13 @@ const Swiper = (props) => {
 
     const newScrollLeft = isMobile
       ? scrollLeft + direction * clientWidth
-      : scrollLeft + direction * clientWidth * (1/options.length);
+      : scrollLeft + direction * clientWidth / options.length;
 
     const duration = Math.abs(direction) * 500;
+    scrollTo({ x: newScrollLeft }, duration, content.current);
 
     lbtn.current.setAttribute('disabled', '');
     rbtn.current.setAttribute('disabled', '');
-
-    scrollTo({ x: newScrollLeft }, duration, content.current);
-
     setTimeout((lbtnRef, rbtnRef) => {
       lbtnRef.current.current.removeAttribute('disabled');
       rbtnRef.current.current.removeAttribute('disabled');
@@ -82,13 +79,9 @@ const Swiper = (props) => {
   }
 
   const _handleChange = (option) => {
-    const
-      prev = options.indexOf(value),
-      next = options.indexOf(option),
-      sign = (next-prev) / (Math.abs(next-prev));
-
-    _handleSlide(sign * next);
+    _handleSlide(options.indexOf(option) - options.indexOf(value));
     setValue(option);
+    setIsDropdown(false);
   }
 
   const _handleClick = (direction) => {
@@ -139,11 +132,7 @@ const Swiper = (props) => {
         visible={isDropdown}
         value={value}
         options={options}
-        onChange={
-          (option) => {
-            _handleChange(option);
-            setIsDropdown(false);
-          }}
+        onChange={_handleChange}
       />
       <div
         className={classnames(className, 'swiper', {
@@ -192,7 +181,8 @@ const Dropdown = ({ visible, value, options, onChange }) => {
       <Menu
         className='dropdown'
         value={value}
-        options={options.filter(option => option.value !== value.value)}
+        options={options}
+        //options={options.filter(option => option.value !== value.value)}
         onChange={onChange}
       />
     </div>
